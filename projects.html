@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Projects · FreelanceDesk{% endblock %}
+{% block content %}
+<h1>Projects</h1>
+
+{% if clients %}
+<form method="post" class="inline-form">
+  <input name="title" placeholder="Project title" required>
+  <select name="client_id" required>
+    {% for c in clients %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+  </select>
+  <input name="budget" type="number" min="0" step="100" placeholder="Budget (₹)">
+  <input name="deadline" type="date" aria-label="Deadline">
+  <select name="status">{% for s in statuses %}<option>{{ s }}</option>{% endfor %}</select>
+  <button>Add project</button>
+</form>
+{% else %}
+<p class="muted">Add a <a href="{{ url_for('clients') }}">client</a> first, then you can create projects for them.</p>
+{% endif %}
+
+<div class="filters">
+  <a href="{{ url_for('projects') }}" class="{{ 'on' if not active }}">All</a>
+  {% for s in statuses %}
+  <a href="{{ url_for('projects', status=s) }}" class="{{ 'on' if active == s }}">{{ s }}</a>
+  {% endfor %}
+</div>
+
+{% if projects %}
+<ul class="rows">
+  {% for p in projects %}
+  <li>
+    <span><strong>{{ p.title }}</strong> <span class="muted">for {{ p.client.name }}</span><br>
+      ₹{{ '{:,.0f}'.format(p.budget or 0) }}
+      {% if p.deadline %}<span class="badge {{ 'late' if p.is_overdue }}">Due {{ p.deadline.strftime('%d %b %Y') }}</span>{% endif %}
+    </span>
+    <span class="actions">
+      <form method="post" action="{{ url_for('update_status', project_id=p.id) }}">
+        <select name="status" onchange="this.form.submit()" aria-label="Status">
+          {% for s in statuses %}<option {{ 'selected' if s == p.status }}>{{ s }}</option>{% endfor %}
+        </select>
+      </form>
+      <form method="post" action="{{ url_for('delete_project', project_id=p.id) }}"
+            onsubmit="return confirm('Delete this project?')">
+        <button class="danger">Delete</button>
+      </form>
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">Nothing here yet.</p>
+{% endif %}
+{% endblock %}

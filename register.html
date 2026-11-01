@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Create account · FreelanceDesk{% endblock %}
+{% block content %}
+<section class="narrow">
+  <h1>Create your account</h1>
+  <form method="post" class="stack">
+    <label>Username <input name="username" minlength="3" required autofocus></label>
+    <label>Password <input name="password" type="password" minlength="6" required></label>
+    <button>Create account</button>
+  </form>
+  <p class="muted">Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+</section>
+{% endblock %}

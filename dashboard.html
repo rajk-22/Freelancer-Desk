@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · FreelanceDesk{% endblock %}
+{% block content %}
+<h1>Your pipeline</h1>
+<div class="pipeline">
+  {% for s in statuses %}
+  <a class="stage" href="{{ url_for('projects', status=s) }}">
+    <span class="stage-name">{{ s }}</span>
+    <span class="stage-money">₹{{ '{:,.0f}'.format(totals.get(s, 0)) }}</span>
+    <span class="muted">{{ counts.get(s, 0) }} project{{ '' if counts.get(s, 0) == 1 else 's' }}</span>
+  </a>
+  {% endfor %}
+</div>
+
+{% if overdue %}
+<h2>Overdue</h2>
+<ul class="rows">
+  {% for p in overdue %}
+  <li><strong>{{ p.title }}</strong> <span class="muted">for {{ p.client.name }}</span>
+      <span class="badge late">Due {{ p.deadline.strftime('%d %b') }}</span></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<h2>Recently added</h2>
+{% if recent %}
+<ul class="rows">
+  {% for p in recent %}
+  <li><strong>{{ p.title }}</strong> <span class="muted">for {{ p.client.name }}</span>
+      <span class="badge">{{ p.status }}</span></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">No projects yet. <a href="{{ url_for('clients') }}">Add a client</a>, then create your first project.</p>
+{% endif %}
+{% endblock %}

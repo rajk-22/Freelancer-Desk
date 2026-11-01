@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Clients · FreelanceDesk{% endblock %}
+{% block content %}
+<h1>Clients</h1>
+<form method="post" class="inline-form">
+  <input name="name" placeholder="Name" required>
+  <input name="email" type="email" placeholder="Email">
+  <input name="company" placeholder="Company">
+  <button>Add client</button>
+</form>
+
+{% if clients %}
+<ul class="rows">
+  {% for c in clients %}
+  <li>
+    <span><strong>{{ c.name }}</strong>
+      {% if c.company %}<span class="muted"> · {{ c.company }}</span>{% endif %}
+      {% if c.email %}<br><a href="mailto:{{ c.email }}">{{ c.email }}</a>{% endif %}</span>
+    <form method="post" action="{{ url_for('delete_client', client_id=c.id) }}"
+          onsubmit="return confirm('Delete {{ c.name }} and all their projects?')">
+      <button class="danger">Delete</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">No clients yet. Add your first one above.</p>
+{% endif %}
+{% endblock %}
